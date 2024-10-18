@@ -1,4 +1,4 @@
-namespace EjemploASPWeb.Models
+namespace Ev3_Y_O_C.Models
 {
     public class Usuario
     {

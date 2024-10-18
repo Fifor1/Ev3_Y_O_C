@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 
-namespace AspWebContext.Data
+namespace Ev3_Y_O_C.Data
 {
     public class AspWebContext : DbContext
     {
@@ -10,7 +10,7 @@ namespace AspWebContext.Data
         {
         }
 
-        public DbSet<AspWebContext.Models.Usuario> Usuario { get; set; }
+        public DbSet<Ev3_Y_O_C.Models.Usuario> Usuario { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
