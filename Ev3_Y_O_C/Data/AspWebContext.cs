@@ -21,7 +21,21 @@ namespace Ev3_Y_O_C.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-           
+            base.OnModelCreating(modelBuilder);
+
+            //Acá se pueden cargar los datos iniciales de la base de datos
+
+            modelBuilder.Entity<Rol>().HasData(new Rol
+            {
+                Id = 1,
+                Nombre = "Administrador"
+            });
+
+            modelBuilder.Entity<Rol>().HasData(new Rol
+            {
+                Id = 2,
+                Nombre = "Usuario"
+            });
         }
     }
 }
