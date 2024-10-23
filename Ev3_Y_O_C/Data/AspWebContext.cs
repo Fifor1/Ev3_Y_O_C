@@ -16,7 +16,8 @@ namespace Ev3_Y_O_C.Data
         public DbSet<Ev3_Y_O_C.Models.ModeloHerramienta> ModelosHerramientas { get; set; }  
         public DbSet<Ev3_Y_O_C.Models.Marca> Marcas { get; set; }  
         public DbSet<Ev3_Y_O_C.Models.Asignacion> Asignaciones { get; set; }  
-        public DbSet<Ev3_Y_O_C.Models.Movimiento> Movimientos { get; set; }  
+        public DbSet<Ev3_Y_O_C.Models.Movimiento> Movimientos { get; set; }
+        public DbSet<Ev3_Y_O_C.Models.Rol> Roles { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

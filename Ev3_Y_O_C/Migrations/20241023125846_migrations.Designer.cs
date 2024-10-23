@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ev3_Y_O_C.Migrations
 {
     [DbContext(typeof(AspWebContext))]
-    [Migration("20241018044625_migraciones")]
-    partial class migraciones
+    [Migration("20241023125846_migrations")]
+    partial class migrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -151,6 +151,35 @@ namespace Ev3_Y_O_C.Migrations
                     b.ToTable("Movimientos");
                 });
 
+            modelBuilder.Entity("Ev3_Y_O_C.Models.Rol", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Nombre = "Administrador"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Nombre = "Usuario"
+                        });
+                });
+
             modelBuilder.Entity("Ev3_Y_O_C.Models.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -167,11 +196,12 @@ namespace Ev3_Y_O_C.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Rol")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("RolId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("RolId");
 
                     b.ToTable("Usuarios");
                 });
@@ -236,6 +266,15 @@ namespace Ev3_Y_O_C.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("Ev3_Y_O_C.Models.Usuario", b =>
+                {
+                    b.HasOne("Ev3_Y_O_C.Models.Rol", null)
+                        .WithMany("Usuarios")
+                        .HasForeignKey("RolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Ev3_Y_O_C.Models.Herramienta", b =>
                 {
                     b.Navigation("Movimientos");
@@ -249,6 +288,11 @@ namespace Ev3_Y_O_C.Migrations
             modelBuilder.Entity("Ev3_Y_O_C.Models.ModeloHerramienta", b =>
                 {
                     b.Navigation("Herramientas");
+                });
+
+            modelBuilder.Entity("Ev3_Y_O_C.Models.Rol", b =>
+                {
+                    b.Navigation("Usuarios");
                 });
 
             modelBuilder.Entity("Ev3_Y_O_C.Models.Usuario", b =>

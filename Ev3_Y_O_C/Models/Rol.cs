@@ -8,4 +8,4 @@
         // Relación uno a muchos entre Rol y Usuario, o sea, un rol puede estar asignado a muchos usuarios
         public ICollection<Usuario> Usuarios { get; set; }
     }
-}
+}   
