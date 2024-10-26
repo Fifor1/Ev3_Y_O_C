@@ -85,7 +85,11 @@ namespace Ev3_Y_O_C.Controllers
             }
 
             var herramienta = await _context.Herramientas.FindAsync(herramientaId);
-            if (herramienta == null || herramienta.Estado != "disponible")
+            if (herramienta == null)
+            {
+                return NotFound("Herramienta no encontrada.");
+            }
+            if (herramienta.Estado != "disponible")
             {
                 return BadRequest("La herramienta no está disponible.");
             }
@@ -111,9 +115,13 @@ namespace Ev3_Y_O_C.Controllers
                 .Include(a => a.Herramienta)
                 .FirstOrDefaultAsync(a => a.Id == asignacionId);
 
-            if (asignacion == null || asignacion.FechaDevolucion != null)
+            if (asignacion == null)
             {
-                return BadRequest("Asignación no válida o ya devuelta.");
+                return NotFound("Asignación no válida o no encontrada.");
+            }
+            if (asignacion.FechaDevolucion != null)
+            {
+                return BadRequest("Esta herramienta ya ha sido devuelta.");
             }
 
             asignacion.FechaDevolucion = DateTime.Now;
@@ -124,8 +132,8 @@ namespace Ev3_Y_O_C.Controllers
             return RedirectToAction("Index");
         }
 
-            // GET: Asignacions/Edit/5
-            public async Task<IActionResult> Edit(int? id)
+        // GET: Asignacions/Edit/5
+        public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Asignaciones == null)
             {
