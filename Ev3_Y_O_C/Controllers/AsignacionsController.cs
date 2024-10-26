@@ -72,8 +72,21 @@ namespace Ev3_Y_O_C.Controllers
             return View(asignacion);
         }
 
-        // GET: Asignacions/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+
+        public async Task<IActionResult> Asignar(int usuarioId, int herramientaId)
+        {
+            var asignacionesActivas = await _context.Asignaciones
+                .Where(a => a.UsuarioId == usuarioId && a.FechaDevolucion == null)
+                .CountAsync();
+
+            if (asignacionesActivas >= 3)
+            {
+                return BadRequest("El usuario ya tiene tres herramientas asignadas activas.");
+            }
+
+
+            // GET: Asignacions/Edit/5
+            public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Asignaciones == null)
             {
