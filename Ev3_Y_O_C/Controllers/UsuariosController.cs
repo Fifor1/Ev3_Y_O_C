@@ -159,5 +159,14 @@ namespace Ev3_Y_O_C.Controllers
         {
             return (_context.Usuarios?.Any(e => e.Id == id)).GetValueOrDefault();
         }
+
+        public async Task<IActionResult> GetUsuarios()
+        {
+            var usuarios = await _context.Usuarios
+                .Select(u => new { u.Id, u.Nombre, u.Email })
+                .ToListAsync();
+
+            return Json(usuarios);
+        }
     }
 }
