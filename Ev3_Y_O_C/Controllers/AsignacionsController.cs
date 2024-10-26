@@ -96,7 +96,13 @@ namespace Ev3_Y_O_C.Controllers
                 HerramientaId = herramientaId,
                 FechaAsignacion = DateTime.Now
             };
+            _context.Asignaciones.Add(asignacion);
 
+            herramienta.Estado = "en uso";
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
 
             // GET: Asignacions/Edit/5
             public async Task<IActionResult> Edit(int? id)
