@@ -1,13 +1,11 @@
-﻿using System.Collections.Generic;
-
-namespace Ev3_Y_O_C.Models
+﻿namespace Ev3_Y_O_C.Models
 {
     public class Rol
     {
         public int Id { get; set; }
         public string Nombre { get; set; }
 
-        // Relación uno a muchos con Usuario
-        public ICollection<Usuario> Usuarios { get; set; } = new List<Usuario>(); // Iniciamos la colección
+        // Relación uno a muchos entre Rol y Usuario, o sea, un rol puede estar asignado a muchos usuarios
+        public ICollection<Usuario> Usuarios { get; set; }
     }
 }
