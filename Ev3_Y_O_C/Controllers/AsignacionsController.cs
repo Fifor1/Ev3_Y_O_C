@@ -104,6 +104,18 @@ namespace Ev3_Y_O_C.Controllers
             return RedirectToAction("Index");
         }
 
+        public async Task<IActionResult> Devolver(int asignacionId)
+        {
+            var asignacion = await _context.Asignaciones
+                .Include(a => a.Herramienta)
+                .FirstOrDefaultAsync(a => a.Id == asignacionId);
+
+            if (asignacion == null || asignacion.FechaDevolucion != null)
+            {
+                return BadRequest("Asignación no válida o ya devuelta.");
+            }
+        }
+
             // GET: Asignacions/Edit/5
             public async Task<IActionResult> Edit(int? id)
         {
