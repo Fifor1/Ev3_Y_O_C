@@ -114,6 +114,13 @@ namespace Ev3_Y_O_C.Controllers
             {
                 return BadRequest("Asignación no válida o ya devuelta.");
             }
+
+            asignacion.FechaDevolucion = DateTime.Now;
+            asignacion.Herramienta.Estado = "disponible";
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
         }
 
             // GET: Asignacions/Edit/5
