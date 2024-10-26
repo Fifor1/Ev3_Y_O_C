@@ -84,6 +84,19 @@ namespace Ev3_Y_O_C.Controllers
                 return BadRequest("El usuario ya tiene tres herramientas asignadas activas.");
             }
 
+            var herramienta = await _context.Herramientas.FindAsync(herramientaId);
+            if (herramienta == null || herramienta.Estado != "disponible")
+            {
+                return BadRequest("La herramienta no está disponible.");
+            }
+
+            var asignacion = new Asignacion
+            {
+                UsuarioId = usuarioId,
+                HerramientaId = herramientaId,
+                FechaAsignacion = DateTime.Now
+            };
+
 
             // GET: Asignacions/Edit/5
             public async Task<IActionResult> Edit(int? id)
