@@ -99,6 +99,7 @@ namespace Ev3_Y_O_C.Controllers
             _context.Asignaciones.Add(asignacion);
 
             herramienta.Estado = "en uso";
+
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Index");
