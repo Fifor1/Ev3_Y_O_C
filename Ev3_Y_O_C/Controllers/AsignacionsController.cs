@@ -72,66 +72,6 @@ namespace Ev3_Y_O_C.Controllers
             return View(asignacion);
         }
 
-
-        public async Task<IActionResult> Asignar(int usuarioId, int herramientaId)
-        {
-            var asignacionesActivas = await _context.Asignaciones
-                .Where(a => a.UsuarioId == usuarioId && a.FechaDevolucion == null)
-                .CountAsync();
-
-            if (asignacionesActivas >= 3)
-            {
-                return BadRequest("El usuario ya tiene tres herramientas asignadas activas.");
-            }
-
-            var herramienta = await _context.Herramientas.FindAsync(herramientaId);
-            if (herramienta == null)
-            {
-                return NotFound("Herramienta no encontrada.");
-            }
-            if (herramienta.Estado != "disponible")
-            {
-                return BadRequest("La herramienta no está disponible.");
-            }
-
-            var asignacion = new Asignacion
-            {
-                UsuarioId = usuarioId,
-                HerramientaId = herramientaId,
-                FechaAsignacion = DateTime.Now
-            };
-            _context.Asignaciones.Add(asignacion);
-
-            herramienta.Estado = "en uso";
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index");
-        }
-
-        public async Task<IActionResult> Devolver(int asignacionId)
-        {
-            var asignacion = await _context.Asignaciones
-                .Include(a => a.Herramienta)
-                .FirstOrDefaultAsync(a => a.Id == asignacionId);
-
-            if (asignacion == null)
-            {
-                return NotFound("Asignación no válida o no encontrada.");
-            }
-            if (asignacion.FechaDevolucion != null)
-            {
-                return BadRequest("Esta herramienta ya ha sido devuelta.");
-            }
-
-            asignacion.FechaDevolucion = DateTime.Now;
-            asignacion.Herramienta.Estado = "disponible";
-
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction("Index");
-        }
-
         // GET: Asignacions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -221,14 +161,14 @@ namespace Ev3_Y_O_C.Controllers
             {
                 _context.Asignaciones.Remove(asignacion);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool AsignacionExists(int id)
         {
-          return (_context.Asignaciones?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Asignaciones?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
