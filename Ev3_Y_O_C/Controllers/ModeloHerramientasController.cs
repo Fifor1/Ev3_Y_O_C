@@ -1,99 +1,93 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Ev3_Y_O_C.Data;
 using Ev3_Y_O_C.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Ev3_Y_O_C.Controllers
 {
-    public class ModeloHerramientasController : Controller
+    public class ModelosHerramientaController : Controller
     {
         private readonly AspWebContext _context;
 
-        public ModeloHerramientasController(AspWebContext context)
+        public ModelosHerramientaController(AspWebContext context)
         {
             _context = context;
         }
 
-        // GET: ModeloHerramientas
+        // GET: ModelosHerramienta
         public async Task<IActionResult> Index()
         {
-            var aspWebContext = _context.ModelosHerramientas.Include(m => m.Marca);
-            return View(await aspWebContext.ToListAsync());
+            var modelos = await _context.ModelosHerramienta.Include(m => m.Marca).ToListAsync();
+            return View(modelos);
         }
 
-        // GET: ModeloHerramientas/Details/5
+        // GET: ModelosHerramienta/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.ModelosHerramientas == null)
+            if (id == null || _context.ModelosHerramienta == null)
             {
                 return NotFound();
             }
 
-            var modeloHerramienta = await _context.ModelosHerramientas
+            var modelo = await _context.ModelosHerramienta
                 .Include(m => m.Marca)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (modeloHerramienta == null)
+            if (modelo == null)
             {
                 return NotFound();
             }
 
-            return View(modeloHerramienta);
+            return View(modelo);
         }
 
-        // GET: ModeloHerramientas/Create
+        // GET: ModelosHerramienta/Create
         public IActionResult Create()
         {
-            ViewData["MarcaId"] = new SelectList(_context.Marcas, "Id", "Id");
+            ViewData["Marcas"] = new SelectList(_context.Marcas, "Id", "Nombre");
             return View();
         }
 
-        // POST: ModeloHerramientas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: ModelosHerramienta/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,NombreModelo,MarcaId")] ModeloHerramienta modeloHerramienta)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,MarcaId")] ModeloHerramienta modelo)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(modeloHerramienta);
+                _context.Add(modelo);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MarcaId"] = new SelectList(_context.Marcas, "Id", "Id", modeloHerramienta.MarcaId);
-            return View(modeloHerramienta);
+            ViewData["Marcas"] = new SelectList(_context.Marcas, "Id", "Nombre", modelo.MarcaId);
+            return View(modelo);
         }
 
-        // GET: ModeloHerramientas/Edit/5
+        // GET: ModelosHerramienta/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.ModelosHerramientas == null)
+            if (id == null || _context.ModelosHerramienta == null)
             {
                 return NotFound();
             }
 
-            var modeloHerramienta = await _context.ModelosHerramientas.FindAsync(id);
-            if (modeloHerramienta == null)
+            var modelo = await _context.ModelosHerramienta.FindAsync(id);
+            if (modelo == null)
             {
                 return NotFound();
             }
-            ViewData["MarcaId"] = new SelectList(_context.Marcas, "Id", "Id", modeloHerramienta.MarcaId);
-            return View(modeloHerramienta);
+            ViewData["Marcas"] = new SelectList(_context.Marcas, "Id", "Nombre", modelo.MarcaId);
+            return View(modelo);
         }
 
-        // POST: ModeloHerramientas/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: ModelosHerramienta/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,NombreModelo,MarcaId")] ModeloHerramienta modeloHerramienta)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,MarcaId")] ModeloHerramienta modelo)
         {
-            if (id != modeloHerramienta.Id)
+            if (id != modelo.Id)
             {
                 return NotFound();
             }
@@ -102,12 +96,12 @@ namespace Ev3_Y_O_C.Controllers
             {
                 try
                 {
-                    _context.Update(modeloHerramienta);
+                    _context.Update(modelo);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ModeloHerramientaExists(modeloHerramienta.Id))
+                    if (!ModeloHerramientaExists(modelo.Id))
                     {
                         return NotFound();
                     }
@@ -118,51 +112,50 @@ namespace Ev3_Y_O_C.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MarcaId"] = new SelectList(_context.Marcas, "Id", "Id", modeloHerramienta.MarcaId);
-            return View(modeloHerramienta);
+            ViewData["Marcas"] = new SelectList(_context.Marcas, "Id", "Nombre", modelo.MarcaId);
+            return View(modelo);
         }
 
-        // GET: ModeloHerramientas/Delete/5
+        // GET: ModelosHerramienta/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.ModelosHerramientas == null)
+            if (id == null || _context.ModelosHerramienta == null)
             {
                 return NotFound();
             }
 
-            var modeloHerramienta = await _context.ModelosHerramientas
-                .Include(m => m.Marca)
+            var modelo = await _context.ModelosHerramienta
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (modeloHerramienta == null)
+            if (modelo == null)
             {
                 return NotFound();
             }
 
-            return View(modeloHerramienta);
+            return View(modelo);
         }
 
-        // POST: ModeloHerramientas/Delete/5
+        // POST: ModelosHerramienta/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.ModelosHerramientas == null)
+            if (_context.ModelosHerramienta == null)
             {
-                return Problem("Entity set 'AspWebContext.ModelosHerramientas'  is null.");
+                return Problem("Entity set 'AspWebContext.ModelosHerramienta' is null.");
             }
-            var modeloHerramienta = await _context.ModelosHerramientas.FindAsync(id);
-            if (modeloHerramienta != null)
+            var modelo = await _context.ModelosHerramienta.FindAsync(id);
+            if (modelo != null)
             {
-                _context.ModelosHerramientas.Remove(modeloHerramienta);
+                _context.ModelosHerramienta.Remove(modelo);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool ModeloHerramientaExists(int id)
         {
-          return (_context.ModelosHerramientas?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.ModelosHerramienta?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

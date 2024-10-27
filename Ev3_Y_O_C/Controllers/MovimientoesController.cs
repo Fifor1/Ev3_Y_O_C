@@ -1,32 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using Ev3_Y_O_C.Data;
 using Ev3_Y_O_C.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Ev3_Y_O_C.Controllers
 {
-    public class MovimientoesController : Controller
+    public class MovimientosController : Controller
     {
         private readonly AspWebContext _context;
 
-        public MovimientoesController(AspWebContext context)
+        public MovimientosController(AspWebContext context)
         {
             _context = context;
         }
 
-        // GET: Movimientoes
+        // GET: Movimientos
         public async Task<IActionResult> Index()
         {
-            var aspWebContext = _context.Movimientos.Include(m => m.Herramienta).Include(m => m.Usuario);
-            return View(await aspWebContext.ToListAsync());
+            var movimientos = await _context.Movimientos
+                .Include(m => m.Usuario)
+                .Include(m => m.Herramienta)
+                .ToListAsync();
+            return View(movimientos);
         }
 
-        // GET: Movimientoes/Details/5
+        // GET: Movimientos/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Movimientos == null)
@@ -35,8 +36,8 @@ namespace Ev3_Y_O_C.Controllers
             }
 
             var movimiento = await _context.Movimientos
-                .Include(m => m.Herramienta)
                 .Include(m => m.Usuario)
+                .Include(m => m.Herramienta)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (movimiento == null)
             {
@@ -46,20 +47,18 @@ namespace Ev3_Y_O_C.Controllers
             return View(movimiento);
         }
 
-        // GET: Movimientoes/Create
+        // GET: Movimientos/Create
         public IActionResult Create()
         {
-            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Id");
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id");
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Nombre");
+            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Nombre");
             return View();
         }
 
-        // POST: Movimientoes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Movimientos/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,HerramientaId,UsuarioId,TipoMovimiento,FechaMovimiento")] Movimiento movimiento)
+        public async Task<IActionResult> Create([Bind("Id,UsuarioId,HerramientaId,FechaMovimiento")] Movimiento movimiento)
         {
             if (ModelState.IsValid)
             {
@@ -67,12 +66,12 @@ namespace Ev3_Y_O_C.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Id", movimiento.HerramientaId);
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id", movimiento.UsuarioId);
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Nombre", movimiento.UsuarioId);
+            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Nombre", movimiento.HerramientaId);
             return View(movimiento);
         }
 
-        // GET: Movimientoes/Edit/5
+        // GET: Movimientos/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Movimientos == null)
@@ -85,17 +84,15 @@ namespace Ev3_Y_O_C.Controllers
             {
                 return NotFound();
             }
-            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Id", movimiento.HerramientaId);
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id", movimiento.UsuarioId);
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Nombre", movimiento.UsuarioId);
+            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Nombre", movimiento.HerramientaId);
             return View(movimiento);
         }
 
-        // POST: Movimientoes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Movimientos/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,HerramientaId,UsuarioId,TipoMovimiento,FechaMovimiento")] Movimiento movimiento)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,UsuarioId,HerramientaId,FechaMovimiento")] Movimiento movimiento)
         {
             if (id != movimiento.Id)
             {
@@ -122,12 +119,12 @@ namespace Ev3_Y_O_C.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Id", movimiento.HerramientaId);
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id", movimiento.UsuarioId);
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Nombre", movimiento.UsuarioId);
+            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Nombre", movimiento.HerramientaId);
             return View(movimiento);
         }
 
-        // GET: Movimientoes/Delete/5
+        // GET: Movimientos/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Movimientos == null)
@@ -136,8 +133,8 @@ namespace Ev3_Y_O_C.Controllers
             }
 
             var movimiento = await _context.Movimientos
-                .Include(m => m.Herramienta)
                 .Include(m => m.Usuario)
+                .Include(m => m.Herramienta)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (movimiento == null)
             {
@@ -147,28 +144,28 @@ namespace Ev3_Y_O_C.Controllers
             return View(movimiento);
         }
 
-        // POST: Movimientoes/Delete/5
+        // POST: Movimientos/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Movimientos == null)
             {
-                return Problem("Entity set 'AspWebContext.Movimientos'  is null.");
+                return Problem("Entity set 'AspWebContext.Movimientos' is null.");
             }
             var movimiento = await _context.Movimientos.FindAsync(id);
             if (movimiento != null)
             {
                 _context.Movimientos.Remove(movimiento);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool MovimientoExists(int id)
         {
-          return (_context.Movimientos?.Any(e => e.Id == id)).GetValueOrDefault();
+            return (_context.Movimientos?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }
