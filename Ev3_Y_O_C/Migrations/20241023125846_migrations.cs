@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Ev3_Y_O_C.Migrations
 {
-    public partial class Migrations : Migration
+    public partial class migrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,11 +15,44 @@ namespace Ev3_Y_O_C.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    NombreMarca = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Marcas", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ModelosHerramientas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    NombreModelo = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MarcaId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ModelosHerramientas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ModelosHerramientas_Marcas_MarcaId",
+                        column: x => x.MarcaId,
+                        principalTable: "Marcas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -29,29 +62,16 @@ namespace Ev3_Y_O_C.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Correo = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RolId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Usuarios", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ModelosHerramienta",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombre = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    MarcaId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ModelosHerramienta", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ModelosHerramienta_Marcas_MarcaId",
-                        column: x => x.MarcaId,
-                        principalTable: "Marcas",
+                        name: "FK_Usuarios_Roles_RolId",
+                        column: x => x.RolId,
+                        principalTable: "Roles",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -63,16 +83,17 @@ namespace Ev3_Y_O_C.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     NumeroSerie = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Estado = table.Column<int>(type: "int", nullable: false),
+                    Estado = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FechaIngreso = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ModeloId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Herramientas", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Herramientas_ModelosHerramienta_ModeloId",
+                        name: "FK_Herramientas_ModelosHerramientas_ModeloId",
                         column: x => x.ModeloId,
-                        principalTable: "ModelosHerramienta",
+                        principalTable: "ModelosHerramientas",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -83,8 +104,8 @@ namespace Ev3_Y_O_C.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UsuarioId = table.Column<int>(type: "int", nullable: false),
                     HerramientaId = table.Column<int>(type: "int", nullable: false),
+                    UsuarioId = table.Column<int>(type: "int", nullable: false),
                     FechaAsignacion = table.Column<DateTime>(type: "datetime2", nullable: false),
                     FechaDevolucion = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -111,10 +132,10 @@ namespace Ev3_Y_O_C.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Tipo = table.Column<int>(type: "int", nullable: false),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    HerramientaId = table.Column<int>(type: "int", nullable: false),
                     UsuarioId = table.Column<int>(type: "int", nullable: false),
-                    HerramientaId = table.Column<int>(type: "int", nullable: false)
+                    TipoMovimiento = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FechaMovimiento = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -133,6 +154,16 @@ namespace Ev3_Y_O_C.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "Nombre" },
+                values: new object[] { 1, "Administrador" });
+
+            migrationBuilder.InsertData(
+                table: "Roles",
+                columns: new[] { "Id", "Nombre" },
+                values: new object[] { 2, "Usuario" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Asignaciones_HerramientaId",
                 table: "Asignaciones",
@@ -149,8 +180,8 @@ namespace Ev3_Y_O_C.Migrations
                 column: "ModeloId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ModelosHerramienta_MarcaId",
-                table: "ModelosHerramienta",
+                name: "IX_ModelosHerramientas_MarcaId",
+                table: "ModelosHerramientas",
                 column: "MarcaId");
 
             migrationBuilder.CreateIndex(
@@ -162,6 +193,11 @@ namespace Ev3_Y_O_C.Migrations
                 name: "IX_Movimientos_UsuarioId",
                 table: "Movimientos",
                 column: "UsuarioId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Usuarios_RolId",
+                table: "Usuarios",
+                column: "RolId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -179,7 +215,10 @@ namespace Ev3_Y_O_C.Migrations
                 name: "Usuarios");
 
             migrationBuilder.DropTable(
-                name: "ModelosHerramienta");
+                name: "ModelosHerramientas");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
 
             migrationBuilder.DropTable(
                 name: "Marcas");

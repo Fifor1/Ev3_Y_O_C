@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Ev3_Y_O_C.Data;
 using Ev3_Y_O_C.Models;
 
@@ -20,11 +22,8 @@ namespace Ev3_Y_O_C.Controllers
         // GET: Herramientas
         public async Task<IActionResult> Index()
         {
-            var herramientas = await _context.Herramientas
-                .Include(h => h.Modelo)
-                .ThenInclude(m => m.Marca)
-                .ToListAsync();
-            return View(herramientas);
+            var aspWebContext = _context.Herramientas.Include(h => h.Modelo);
+            return View(await aspWebContext.ToListAsync());
         }
 
         // GET: Herramientas/Details/5
@@ -37,7 +36,6 @@ namespace Ev3_Y_O_C.Controllers
 
             var herramienta = await _context.Herramientas
                 .Include(h => h.Modelo)
-                .ThenInclude(m => m.Marca)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (herramienta == null)
             {
@@ -50,14 +48,16 @@ namespace Ev3_Y_O_C.Controllers
         // GET: Herramientas/Create
         public IActionResult Create()
         {
-            ViewData["Modelos"] = new SelectList(_context.ModelosHerramienta, "Id", "Nombre");
+            ViewData["ModeloId"] = new SelectList(_context.ModelosHerramientas, "Id", "Id");
             return View();
         }
 
         // POST: Herramientas/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,NumeroSerie,Estado,ModeloId")] Herramienta herramienta)
+        public async Task<IActionResult> Create([Bind("Id,NumeroSerie,Estado,FechaIngreso,ModeloId")] Herramienta herramienta)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace Ev3_Y_O_C.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Modelos"] = new SelectList(_context.ModelosHerramienta, "Id", "Nombre", herramienta.ModeloId);
+            ViewData["ModeloId"] = new SelectList(_context.ModelosHerramientas, "Id", "Id", herramienta.ModeloId);
             return View(herramienta);
         }
 
@@ -82,14 +82,16 @@ namespace Ev3_Y_O_C.Controllers
             {
                 return NotFound();
             }
-            ViewData["Modelos"] = new SelectList(_context.ModelosHerramienta, "Id", "Nombre", herramienta.ModeloId);
+            ViewData["ModeloId"] = new SelectList(_context.ModelosHerramientas, "Id", "Id", herramienta.ModeloId);
             return View(herramienta);
         }
 
         // POST: Herramientas/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,NumeroSerie,Estado,ModeloId")] Herramienta herramienta)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,NumeroSerie,Estado,FechaIngreso,ModeloId")] Herramienta herramienta)
         {
             if (id != herramienta.Id)
             {
@@ -116,7 +118,7 @@ namespace Ev3_Y_O_C.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["Modelos"] = new SelectList(_context.ModelosHerramienta, "Id", "Nombre", herramienta.ModeloId);
+            ViewData["ModeloId"] = new SelectList(_context.ModelosHerramientas, "Id", "Id", herramienta.ModeloId);
             return View(herramienta);
         }
 
@@ -129,6 +131,7 @@ namespace Ev3_Y_O_C.Controllers
             }
 
             var herramienta = await _context.Herramientas
+                .Include(h => h.Modelo)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (herramienta == null)
             {
@@ -145,21 +148,21 @@ namespace Ev3_Y_O_C.Controllers
         {
             if (_context.Herramientas == null)
             {
-                return Problem("Entity set 'AspWebContext.Herramientas' is null.");
+                return Problem("Entity set 'AspWebContext.Herramientas'  is null.");
             }
             var herramienta = await _context.Herramientas.FindAsync(id);
             if (herramienta != null)
             {
                 _context.Herramientas.Remove(herramienta);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool HerramientaExists(int id)
         {
-            return (_context.Herramientas?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Herramientas?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

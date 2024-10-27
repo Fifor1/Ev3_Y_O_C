@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Ev3_Y_O_C.Data;
 using Ev3_Y_O_C.Models;
@@ -21,8 +23,8 @@ namespace Ev3_Y_O_C.Controllers
         public async Task<IActionResult> Index()
         {
             return _context.Usuarios != null ?
-                View(await _context.Usuarios.ToListAsync()) :
-                Problem("Entity set 'AspWebContext.Usuarios' is null.");
+                        View(await _context.Usuarios.ToListAsync()) :
+                        Problem("Entity set 'AspWebContext.Usuarios'  is null.");
         }
 
         // GET: Usuarios/Details/5
@@ -50,9 +52,11 @@ namespace Ev3_Y_O_C.Controllers
         }
 
         // POST: Usuarios/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre,Correo")] Usuario usuario)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,Email,RolId")] Usuario usuario)
         {
             if (ModelState.IsValid)
             {
@@ -80,9 +84,11 @@ namespace Ev3_Y_O_C.Controllers
         }
 
         // POST: Usuarios/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Correo")] Usuario usuario)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,Email,RolId")] Usuario usuario)
         {
             if (id != usuario.Id)
             {
@@ -137,7 +143,7 @@ namespace Ev3_Y_O_C.Controllers
         {
             if (_context.Usuarios == null)
             {
-                return Problem("Entity set 'AspWebContext.Usuarios' is null.");
+                return Problem("Entity set 'AspWebContext.Usuarios'  is null.");
             }
             var usuario = await _context.Usuarios.FindAsync(id);
             if (usuario != null)
@@ -152,6 +158,15 @@ namespace Ev3_Y_O_C.Controllers
         private bool UsuarioExists(int id)
         {
             return (_context.Usuarios?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+
+        public async Task<IActionResult> GetUsuarios()
+        {
+            var usuarios = await _context.Usuarios
+                .Select(u => new { u.Id, u.Nombre, u.Email })
+                .ToListAsync();
+
+            return Json(usuarios);
         }
     }
 }

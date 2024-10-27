@@ -1,7 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Ev3_Y_O_C.Data;
 using Ev3_Y_O_C.Models;
 
@@ -19,9 +22,9 @@ namespace Ev3_Y_O_C.Controllers
         // GET: Marcas
         public async Task<IActionResult> Index()
         {
-            return _context.Marcas != null ?
-                View(await _context.Marcas.ToListAsync()) :
-                Problem("Entity set 'AspWebContext.Marcas' is null.");
+              return _context.Marcas != null ? 
+                          View(await _context.Marcas.ToListAsync()) :
+                          Problem("Entity set 'AspWebContext.Marcas'  is null.");
         }
 
         // GET: Marcas/Details/5
@@ -49,9 +52,11 @@ namespace Ev3_Y_O_C.Controllers
         }
 
         // POST: Marcas/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nombre")] Marca marca)
+        public async Task<IActionResult> Create([Bind("Id,NombreMarca")] Marca marca)
         {
             if (ModelState.IsValid)
             {
@@ -79,9 +84,11 @@ namespace Ev3_Y_O_C.Controllers
         }
 
         // POST: Marcas/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre")] Marca marca)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,NombreMarca")] Marca marca)
         {
             if (id != marca.Id)
             {
@@ -136,21 +143,21 @@ namespace Ev3_Y_O_C.Controllers
         {
             if (_context.Marcas == null)
             {
-                return Problem("Entity set 'AspWebContext.Marcas' is null.");
+                return Problem("Entity set 'AspWebContext.Marcas'  is null.");
             }
             var marca = await _context.Marcas.FindAsync(id);
             if (marca != null)
             {
                 _context.Marcas.Remove(marca);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool MarcaExists(int id)
         {
-            return (_context.Marcas?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Marcas?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

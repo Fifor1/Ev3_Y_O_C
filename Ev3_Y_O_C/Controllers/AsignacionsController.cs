@@ -1,33 +1,32 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Ev3_Y_O_C.Data;
 using Ev3_Y_O_C.Models;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Ev3_Y_O_C.Controllers
 {
-    public class AsignacionesController : Controller
+    public class AsignacionsController : Controller
     {
         private readonly AspWebContext _context;
 
-        public AsignacionesController(AspWebContext context)
+        public AsignacionsController(AspWebContext context)
         {
             _context = context;
         }
 
-        // GET: Asignaciones
+        // GET: Asignacions
         public async Task<IActionResult> Index()
         {
-            var asignaciones = await _context.Asignaciones
-                .Include(a => a.Usuario)
-                .Include(a => a.Herramienta)
-                .ToListAsync();
-            return View(asignaciones);
+            var aspWebContext = _context.Asignaciones.Include(a => a.Herramienta).Include(a => a.Usuario);
+            return View(await aspWebContext.ToListAsync());
         }
 
-        // GET: Asignaciones/Details/5
+        // GET: Asignacions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Asignaciones == null)
@@ -36,8 +35,8 @@ namespace Ev3_Y_O_C.Controllers
             }
 
             var asignacion = await _context.Asignaciones
-                .Include(a => a.Usuario)
                 .Include(a => a.Herramienta)
+                .Include(a => a.Usuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (asignacion == null)
             {
@@ -47,18 +46,20 @@ namespace Ev3_Y_O_C.Controllers
             return View(asignacion);
         }
 
-        // GET: Asignaciones/Create
+        // GET: Asignacions/Create
         public IActionResult Create()
         {
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Nombre");
-            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Nombre");
+            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Id");
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id");
             return View();
         }
 
-        // POST: Asignaciones/Create
+        // POST: Asignacions/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,UsuarioId,HerramientaId,FechaAsignacion,FechaDevolucion")] Asignacion asignacion)
+        public async Task<IActionResult> Create([Bind("Id,HerramientaId,UsuarioId,FechaAsignacion,FechaDevolucion")] Asignacion asignacion)
         {
             if (ModelState.IsValid)
             {
@@ -66,12 +67,72 @@ namespace Ev3_Y_O_C.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Nombre", asignacion.UsuarioId);
-            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Nombre", asignacion.HerramientaId);
+            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Id", asignacion.HerramientaId);
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id", asignacion.UsuarioId);
             return View(asignacion);
         }
 
-        // GET: Asignaciones/Edit/5
+
+        public async Task<IActionResult> Asignar(int usuarioId, int herramientaId)
+        {
+            var asignacionesActivas = await _context.Asignaciones
+                .Where(a => a.UsuarioId == usuarioId && a.FechaDevolucion == null)
+                .CountAsync();
+
+            if (asignacionesActivas >= 3)
+            {
+                return BadRequest("El usuario ya tiene tres herramientas asignadas activas.");
+            }
+
+            var herramienta = await _context.Herramientas.FindAsync(herramientaId);
+            if (herramienta == null)
+            {
+                return NotFound("Herramienta no encontrada.");
+            }
+            if (herramienta.Estado != "disponible")
+            {
+                return BadRequest("La herramienta no está disponible.");
+            }
+
+            var asignacion = new Asignacion
+            {
+                UsuarioId = usuarioId,
+                HerramientaId = herramientaId,
+                FechaAsignacion = DateTime.Now
+            };
+            _context.Asignaciones.Add(asignacion);
+
+            herramienta.Estado = "en uso";
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        public async Task<IActionResult> Devolver(int asignacionId)
+        {
+            var asignacion = await _context.Asignaciones
+                .Include(a => a.Herramienta)
+                .FirstOrDefaultAsync(a => a.Id == asignacionId);
+
+            if (asignacion == null)
+            {
+                return NotFound("Asignación no válida o no encontrada.");
+            }
+            if (asignacion.FechaDevolucion != null)
+            {
+                return BadRequest("Esta herramienta ya ha sido devuelta.");
+            }
+
+            asignacion.FechaDevolucion = DateTime.Now;
+            asignacion.Herramienta.Estado = "disponible";
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Index");
+        }
+
+        // GET: Asignacions/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Asignaciones == null)
@@ -84,15 +145,17 @@ namespace Ev3_Y_O_C.Controllers
             {
                 return NotFound();
             }
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Nombre", asignacion.UsuarioId);
-            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Nombre", asignacion.HerramientaId);
+            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Id", asignacion.HerramientaId);
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id", asignacion.UsuarioId);
             return View(asignacion);
         }
 
-        // POST: Asignaciones/Edit/5
+        // POST: Asignacions/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,UsuarioId,HerramientaId,FechaAsignacion,FechaDevolucion")] Asignacion asignacion)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,HerramientaId,UsuarioId,FechaAsignacion,FechaDevolucion")] Asignacion asignacion)
         {
             if (id != asignacion.Id)
             {
@@ -119,12 +182,12 @@ namespace Ev3_Y_O_C.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Nombre", asignacion.UsuarioId);
-            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Nombre", asignacion.HerramientaId);
+            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Id", asignacion.HerramientaId);
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id", asignacion.UsuarioId);
             return View(asignacion);
         }
 
-        // GET: Asignaciones/Delete/5
+        // GET: Asignacions/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Asignaciones == null)
@@ -133,8 +196,8 @@ namespace Ev3_Y_O_C.Controllers
             }
 
             var asignacion = await _context.Asignaciones
-                .Include(a => a.Usuario)
                 .Include(a => a.Herramienta)
+                .Include(a => a.Usuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (asignacion == null)
             {
@@ -144,28 +207,28 @@ namespace Ev3_Y_O_C.Controllers
             return View(asignacion);
         }
 
-        // POST: Asignaciones/Delete/5
+        // POST: Asignacions/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             if (_context.Asignaciones == null)
             {
-                return Problem("Entity set 'AspWebContext.Asignaciones' is null.");
+                return Problem("Entity set 'AspWebContext.Asignaciones'  is null.");
             }
             var asignacion = await _context.Asignaciones.FindAsync(id);
             if (asignacion != null)
             {
                 _context.Asignaciones.Remove(asignacion);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool AsignacionExists(int id)
         {
-            return (_context.Asignaciones?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Asignaciones?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

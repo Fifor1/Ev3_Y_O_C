@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ev3_Y_O_C.Migrations
 {
     [DbContext(typeof(AspWebContext))]
-    [Migration("20241027043506_Migrations")]
-    partial class Migrations
+    [Migration("20241023125846_migrations")]
+    partial class migrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -61,8 +61,12 @@ namespace Ev3_Y_O_C.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FechaIngreso")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("ModeloId")
                         .HasColumnType("int");
@@ -86,7 +90,7 @@ namespace Ev3_Y_O_C.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("NombreMarca")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -106,7 +110,7 @@ namespace Ev3_Y_O_C.Migrations
                     b.Property<int>("MarcaId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("NombreModelo")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -114,7 +118,7 @@ namespace Ev3_Y_O_C.Migrations
 
                     b.HasIndex("MarcaId");
 
-                    b.ToTable("ModelosHerramienta");
+                    b.ToTable("ModelosHerramientas");
                 });
 
             modelBuilder.Entity("Ev3_Y_O_C.Models.Movimiento", b =>
@@ -125,14 +129,15 @@ namespace Ev3_Y_O_C.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime>("Fecha")
+                    b.Property<DateTime>("FechaMovimiento")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("HerramientaId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Tipo")
-                        .HasColumnType("int");
+                    b.Property<string>("TipoMovimiento")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UsuarioId")
                         .HasColumnType("int");
@@ -146,6 +151,35 @@ namespace Ev3_Y_O_C.Migrations
                     b.ToTable("Movimientos");
                 });
 
+            modelBuilder.Entity("Ev3_Y_O_C.Models.Rol", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Roles");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Nombre = "Administrador"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Nombre = "Usuario"
+                        });
+                });
+
             modelBuilder.Entity("Ev3_Y_O_C.Models.Usuario", b =>
                 {
                     b.Property<int>("Id")
@@ -154,7 +188,7 @@ namespace Ev3_Y_O_C.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<string>("Correo")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -162,7 +196,12 @@ namespace Ev3_Y_O_C.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("RolId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("RolId");
 
                     b.ToTable("Usuarios");
                 });
@@ -170,7 +209,7 @@ namespace Ev3_Y_O_C.Migrations
             modelBuilder.Entity("Ev3_Y_O_C.Models.Asignacion", b =>
                 {
                     b.HasOne("Ev3_Y_O_C.Models.Herramienta", "Herramienta")
-                        .WithMany("Asignaciones")
+                        .WithMany()
                         .HasForeignKey("HerramientaId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -217,7 +256,7 @@ namespace Ev3_Y_O_C.Migrations
                         .IsRequired();
 
                     b.HasOne("Ev3_Y_O_C.Models.Usuario", "Usuario")
-                        .WithMany("Movimientos")
+                        .WithMany()
                         .HasForeignKey("UsuarioId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -227,10 +266,17 @@ namespace Ev3_Y_O_C.Migrations
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("Ev3_Y_O_C.Models.Usuario", b =>
+                {
+                    b.HasOne("Ev3_Y_O_C.Models.Rol", null)
+                        .WithMany("Usuarios")
+                        .HasForeignKey("RolId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Ev3_Y_O_C.Models.Herramienta", b =>
                 {
-                    b.Navigation("Asignaciones");
-
                     b.Navigation("Movimientos");
                 });
 
@@ -244,11 +290,14 @@ namespace Ev3_Y_O_C.Migrations
                     b.Navigation("Herramientas");
                 });
 
+            modelBuilder.Entity("Ev3_Y_O_C.Models.Rol", b =>
+                {
+                    b.Navigation("Usuarios");
+                });
+
             modelBuilder.Entity("Ev3_Y_O_C.Models.Usuario", b =>
                 {
                     b.Navigation("Asignaciones");
-
-                    b.Navigation("Movimientos");
                 });
 #pragma warning restore 612, 618
         }
