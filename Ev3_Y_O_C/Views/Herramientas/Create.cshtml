@@ -1,4 +1,4 @@
-﻿@model Ev3_Y_O_C.Models.Herramienta
+﻿@model Ev3_Y_O_C.Models.ViewmodelHerramienta
 
 @{
     ViewData["Title"] = "Ingreso de Herramientas";
@@ -166,13 +166,12 @@
 
                 <form asp-action="Crear" method="post">
                     <div class="form-grid">
-                        <!-- Nombre de la herramienta -->
+                  
                         <div class="form-group">
                             <label asp-for="Nombre">Nombre de la herramienta:</label>
                             <input asp-for="Nombre" class="form-control" placeholder="Ingrese el nombre" required />
                         </div>
 
-                        <!-- Modelo de la herramienta como ComboBox -->
                         <div class="form-group">
                             <label for="ModeloHerramientaId">Modelo de la herramienta:</label>
                             <select asp-for="ModeloId" class="form-control" required>
@@ -184,19 +183,16 @@
                             </select>
                         </div>
 
-                        <!-- Marca de la herramienta -->
                         <div class="form-group">
                             <label asp-for="Marca">Marca de la herramienta:</label>
                             <input asp-for="Marca" class="form-control" placeholder="Ingrese la marca" required />
                         </div>
 
-                        <!-- Nº de Serie -->
                         <div class="form-group">
                             <label asp-for="NumeroSerie">Nº de Serie:</label>
                             <input asp-for="NumeroSerie" class="form-control" placeholder="Ingrese el número de serie" required />
                         </div>
 
-                        <!-- Estado -->
                         <div class="form-group">
                             <label for="Estado">Estado:</label>
                             <select asp-for="Estado" class="form-control" required>
@@ -207,14 +203,12 @@
                             </select>
                         </div>
 
-                        <!-- Fecha de Ingreso - Full Width -->
                         <div class="form-group full-width">
                             <label asp-for="FechaIngreso">Fecha de Ingreso:</label>
                             <input asp-for="FechaIngreso" class="form-control" type="date" required />
                         </div>
                     </div>
 
-                    <!-- Buttons -->
                     <div class="buttons-container">
                         <button type="submit" class="btn btn-primary">Guardar</button>
                         <button type="button" class="btn btn-secondary" onclick="location.href='@Url.Action("Index")'">Cancelar</button>
