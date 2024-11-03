@@ -11,7 +11,7 @@
 <body>
     <div class="container">
         <!-- Sidebar -->
-        <div class="sidebar">
+       <div class="sidebar">
             <div class="sidebar-header">
                 <h1>Infolutions</h1>
                 <p>Gestión de bodega</p>
@@ -19,11 +19,12 @@
             <ul class="sidebar-menu">
                 <li class="active">Home</li>
                 <li>Herramientas</li>
-                <li>Asignaciones</li>
+                <li>Usuarios</li>
                 <li>Mantenimiento</li>
                 <li>Reportes</li>
             </ul>
         </div>
+
 
         <!-- Contenido Principal -->
         <div class="main-content">
@@ -42,7 +43,7 @@
                     </thead>
                     <tbody>
                         @foreach (var HerramientaUsuario in Model)
-                                                {
+                        {
                             <tr>
                                 <td>@HerramientaUsuario.FechaIngreso.ToString("dd-MM-yyyy")</td>
                                 <td>@HerramientaUsuario.NombreUsuario</td>
@@ -51,7 +52,7 @@
                             </tr>
                         }
                     </tbody>
-                </table>
+                </table
             </div>
         </div>
     </div>
