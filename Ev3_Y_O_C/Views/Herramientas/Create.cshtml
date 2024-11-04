@@ -1,4 +1,4 @@
-﻿@model Ev3_Y_O_C.Models.ViewmodelHerramienta
+﻿@model Ev3_Y_O_C.Models.Herramienta
 
 @{
     ViewData["Title"] = "Ingreso de Herramientas";
@@ -181,11 +181,6 @@
                                     <option value="@modelo.Id">@modelo.Nombre</option>
                                 }
                             </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label asp-for="Marca">Marca de la herramienta:</label>
-                            <input asp-for="Marca" class="form-control" placeholder="Ingrese la marca" required />
                         </div>
 
                         <div class="form-group">

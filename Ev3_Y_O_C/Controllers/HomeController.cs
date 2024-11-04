@@ -15,7 +15,21 @@ namespace Ev3_Y_O_C.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            var herramientaUsuario = new HerramientaUsuario
+            {
+                FechaIngreso = DateTime.Now,
+                NombreUsuario = "",
+                NombreHerramienta = "",
+                Estado = ""
+            };
+
+            // Instanciando el modelo con datos de ejemplo
+            var herramientaUsuarioViewModel = new HerramientaUsuarioViewModel();
+
+            herramientaUsuarioViewModel.TablaHerramientasUsuarios.Add(herramientaUsuario);
+
+            // Pasar el modelo a la vista
+            return View(herramientaUsuarioViewModel);
         }
 
         public IActionResult Privacy()

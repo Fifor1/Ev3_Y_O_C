@@ -1,5 +1,6 @@
 ﻿@model IEnumerable<Ev3_Y_O_C.Models.HerramientaUsuarioViewModel>
 
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -51,8 +52,19 @@
                                 <td>@HerramientaUsuario.Estado</td>
                             </tr>
                         }
+
+                        @foreach (var HerramientaUsuario in Model)
+                        {
+                            <tr>
+                                <td>@HerramientaUsuario.FechaIngreso.ToString("dd-MM-yyyy")</td>
+                                <td>@HerramientaUsuario.TablaHerramientasUsuarios.</td>
+                                <td>@HerramientaUsuario.NombreHerramienta</td>
+                                <td>@HerramientaUsuario.Estado</td>
+                            </tr>
+                        }
+
                     </tbody>
-                </table
+                </table>
             </div>
         </div>
     </div>
