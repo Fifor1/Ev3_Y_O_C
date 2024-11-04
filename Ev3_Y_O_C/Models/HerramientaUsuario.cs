@@ -11,7 +11,8 @@
 
     public class HerramientaUsuarioViewModel
     {
-        public  List<HerramientaUsuario>  TablaHerramientasUsuarios { get; set; }
+        public List<HerramientaUsuario> TablaHerramientasUsuarios { get; set; }
+
     }
 
 }
