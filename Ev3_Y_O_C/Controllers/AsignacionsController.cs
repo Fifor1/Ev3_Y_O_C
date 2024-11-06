@@ -49,8 +49,8 @@ namespace Ev3_Y_O_C.Controllers
         // GET: Asignacions/Create
         public IActionResult Create()
         {
-            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Id");
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id");
+            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Nombre");
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Nombre");
             return View();
         }
 

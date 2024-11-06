@@ -15,25 +15,8 @@ namespace Ev3_Y_O_C.Controllers
 
         public IActionResult Index()
         {
-            // Crear e inicializar el ViewModel con datos de ejemplo en la lista
-            var herramientaUsuarioViewModel = new HerramientaUsuarioViewModel
-            {
-                TablaHerramientasUsuarios = new List<HerramientaUsuario>
-                {
-                    new HerramientaUsuario
-                    {
-                        FechaIngreso = DateTime.Now,
-                        NombreUsuario = "Cualquier nombre",
-                        NombreHerramienta = "Cualquier herramienta",
-                        Estado = "Un estado"
-                    }
-                }   
-            };
-
-            // Pasar el modelo a la vista
-            return View(herramientaUsuarioViewModel);
+            return View();
         }
-
 
         public IActionResult Privacy()
         {

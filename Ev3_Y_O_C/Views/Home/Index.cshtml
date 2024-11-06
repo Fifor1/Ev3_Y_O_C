@@ -1,62 +1,8 @@
-﻿@model Ev3_Y_O_C.Models.HerramientaUsuarioViewModel
+﻿﻿@{
+    ViewData["Title"] = "Home Page";
+}
 
-
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Infolutions - Gestión de bodega</title>
-    <link rel="stylesheet" href="~/css/styles.css" />
-</head>
-<body>
-    <div class="container">
-        <!-- Sidebar -->
-       <div class="sidebar">
-            <div class="sidebar-header">
-                <h1>Infolutions</h1>
-                <p>Gestión de bodega</p>
-            </div>
-            <ul class="sidebar-menu">
-                <li class="active">Home</li>
-                <li>Herramientas</li>
-                <li>Usuarios</li>
-                <li>Mantenimiento</li>
-                <li>Reportes</li>
-            </ul>
-        </div>
-
-
-        <!-- Contenido Principal -->
-        <div class="main-content">
-            <h2 class="welcome">Bienvenidos a Infolutions</h2>
-
-            <!-- Tabla -->
-            <div class="table-container">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Empleado</th>
-                            <th>Nombre de la Herramienta</th>
-                            <th>Estatus</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var HerramientaUsuario in Model.TablaHerramientasUsuarios)
-                        {
-                            <tr>
-                                <td>@HerramientaUsuario.FechaIngreso.ToString("dd-MM-yyyy")</td>
-                                <td>@HerramientaUsuario.NombreUsuario</td>
-                                <td>@HerramientaUsuario.NombreHerramienta</td>
-                                <td>@HerramientaUsuario.Estado</td>
-                            </tr>
-                        }
-
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-</body>
-</html>
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>

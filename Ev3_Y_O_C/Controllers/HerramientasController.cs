@@ -22,8 +22,9 @@ namespace Ev3_Y_O_C.Controllers
         // GET: Herramientas
         public async Task<IActionResult> Index()
         {
-            var aspWebContext = _context.Herramientas.Include(h => h.Modelo);
-            return View(await aspWebContext.ToListAsync());
+              return _context.Herramientas != null ? 
+                          View(await _context.Herramientas.ToListAsync()) :
+                          Problem("Entity set 'AspWebContext.Herramientas'  is null.");
         }
 
         // GET: Herramientas/Details/5
@@ -35,7 +36,6 @@ namespace Ev3_Y_O_C.Controllers
             }
 
             var herramienta = await _context.Herramientas
-                .Include(h => h.Modelo)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (herramienta == null)
             {
@@ -48,7 +48,7 @@ namespace Ev3_Y_O_C.Controllers
         // GET: Herramientas/Create
         public IActionResult Create()
         {
-            ViewData["ModeloId"] = new SelectList(_context.ModelosHerramienta, "Id", "Id");
+            ViewData["IdMarca"] = new SelectList(_context.Marcas, "Id", "Nombre");
             return View();
         }
 
@@ -57,7 +57,7 @@ namespace Ev3_Y_O_C.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,NumeroSerie,Estado,FechaIngreso,ModeloId")] Herramienta herramienta)
+        public async Task<IActionResult> Create([Bind("Id,Nombre,NumeroSerie,Modelo,IdMarca,Estado,FechaIngreso")] Herramienta herramienta)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +65,6 @@ namespace Ev3_Y_O_C.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ModeloId"] = new SelectList(_context.ModelosHerramienta, "Id", "Id", herramienta.ModeloId);
             return View(herramienta);
         }
 
@@ -82,7 +81,6 @@ namespace Ev3_Y_O_C.Controllers
             {
                 return NotFound();
             }
-            ViewData["ModeloId"] = new SelectList(_context.ModelosHerramienta, "Id", "Id", herramienta.ModeloId);
             return View(herramienta);
         }
 
@@ -91,7 +89,7 @@ namespace Ev3_Y_O_C.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,NumeroSerie,Estado,FechaIngreso,ModeloId")] Herramienta herramienta)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nombre,NumeroSerie,Modelo,IdMarca,Estado,FechaIngreso")] Herramienta herramienta)
         {
             if (id != herramienta.Id)
             {
@@ -118,7 +116,6 @@ namespace Ev3_Y_O_C.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ModeloId"] = new SelectList(_context.ModelosHerramienta, "Id", "Id", herramienta.ModeloId);
             return View(herramienta);
         }
 
@@ -131,7 +128,6 @@ namespace Ev3_Y_O_C.Controllers
             }
 
             var herramienta = await _context.Herramientas
-                .Include(h => h.Modelo)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (herramienta == null)
             {

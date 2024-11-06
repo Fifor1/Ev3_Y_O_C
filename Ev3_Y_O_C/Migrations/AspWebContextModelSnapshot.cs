@@ -59,22 +59,32 @@ namespace Ev3_Y_O_C.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<int>("Estado")
-                        .HasColumnType("int");
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("FechaIngreso")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ModeloId")
+                    b.Property<int>("IdMarca")
                         .HasColumnType("int");
 
-                    b.Property<string>("NumeroSerie")
+                    b.Property<int?>("MarcaId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Modelo")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nombre")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NumeroSerie")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ModeloId");
+                    b.HasIndex("MarcaId");
 
                     b.ToTable("Herramientas");
                 });
@@ -94,28 +104,6 @@ namespace Ev3_Y_O_C.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Marcas");
-                });
-
-            modelBuilder.Entity("Ev3_Y_O_C.Models.ModeloHerramienta", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("MarcaId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MarcaId");
-
-                    b.ToTable("ModelosHerramienta");
                 });
 
             modelBuilder.Entity("Ev3_Y_O_C.Models.Movimiento", b =>
@@ -189,22 +177,9 @@ namespace Ev3_Y_O_C.Migrations
 
             modelBuilder.Entity("Ev3_Y_O_C.Models.Herramienta", b =>
                 {
-                    b.HasOne("Ev3_Y_O_C.Models.ModeloHerramienta", "Modelo")
-                        .WithMany("Herramientas")
-                        .HasForeignKey("ModeloId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Modelo");
-                });
-
-            modelBuilder.Entity("Ev3_Y_O_C.Models.ModeloHerramienta", b =>
-                {
                     b.HasOne("Ev3_Y_O_C.Models.Marca", "Marca")
-                        .WithMany("Modelos")
-                        .HasForeignKey("MarcaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .WithMany()
+                        .HasForeignKey("MarcaId");
 
                     b.Navigation("Marca");
                 });
@@ -226,16 +201,6 @@ namespace Ev3_Y_O_C.Migrations
                     b.Navigation("Herramienta");
 
                     b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("Ev3_Y_O_C.Models.Marca", b =>
-                {
-                    b.Navigation("Modelos");
-                });
-
-            modelBuilder.Entity("Ev3_Y_O_C.Models.ModeloHerramienta", b =>
-                {
-                    b.Navigation("Herramientas");
                 });
 
             modelBuilder.Entity("Ev3_Y_O_C.Models.Usuario", b =>
