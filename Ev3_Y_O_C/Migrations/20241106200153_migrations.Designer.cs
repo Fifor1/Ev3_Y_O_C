@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ev3_Y_O_C.Migrations
 {
     [DbContext(typeof(AspWebContext))]
-    [Migration("20241106181419_Migrations")]
-    partial class Migrations
+    [Migration("20241106200153_migrations")]
+    partial class migrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -108,7 +108,7 @@ namespace Ev3_Y_O_C.Migrations
                     b.ToTable("Marcas");
                 });
 
-            modelBuilder.Entity("Ev3_Y_O_C.Models.Movimiento", b =>
+            modelBuilder.Entity("Ev3_Y_O_C.Models.TipoMovimiento", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -116,25 +116,36 @@ namespace Ev3_Y_O_C.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-                    b.Property<DateTime>("FechaMovimiento")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("HerramientaId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TipoMovimiento")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UsuarioId")
-                        .HasColumnType("int");
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HerramientaId");
+                    b.ToTable("TipoMovimientos");
 
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("Movimientos");
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Nombre = "Ingreso"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Nombre = "Asignación"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Nombre = "Mantención"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Nombre = "Retorno"
+                        });
                 });
 
             modelBuilder.Entity("Ev3_Y_O_C.Models.Usuario", b =>
@@ -156,6 +167,37 @@ namespace Ev3_Y_O_C.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Usuarios");
+                });
+
+            modelBuilder.Entity("Movimiento", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("FechaMovimiento")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("HerramientaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TipoMovimientoId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UsuarioId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("HerramientaId");
+
+                    b.HasIndex("TipoMovimientoId");
+
+                    b.HasIndex("UsuarioId");
+
+                    b.ToTable("Movimientos");
                 });
 
             modelBuilder.Entity("Ev3_Y_O_C.Models.Asignacion", b =>
@@ -186,11 +228,17 @@ namespace Ev3_Y_O_C.Migrations
                     b.Navigation("Marca");
                 });
 
-            modelBuilder.Entity("Ev3_Y_O_C.Models.Movimiento", b =>
+            modelBuilder.Entity("Movimiento", b =>
                 {
                     b.HasOne("Ev3_Y_O_C.Models.Herramienta", "Herramienta")
                         .WithMany()
                         .HasForeignKey("HerramientaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Ev3_Y_O_C.Models.TipoMovimiento", "TipoMovimiento")
+                        .WithMany()
+                        .HasForeignKey("TipoMovimientoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -201,6 +249,8 @@ namespace Ev3_Y_O_C.Migrations
                         .IsRequired();
 
                     b.Navigation("Herramienta");
+
+                    b.Navigation("TipoMovimiento");
 
                     b.Navigation("Usuario");
                 });

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Ev3_Y_O_C.Migrations
 {
-    public partial class Migrations : Migration
+    public partial class migrations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -20,6 +20,19 @@ namespace Ev3_Y_O_C.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Marcas", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TipoMovimientos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TipoMovimientos", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -95,7 +108,7 @@ namespace Ev3_Y_O_C.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     HerramientaId = table.Column<int>(type: "int", nullable: false),
-                    TipoMovimiento = table.Column<int>(type: "int", nullable: false),
+                    TipoMovimientoId = table.Column<int>(type: "int", nullable: false),
                     FechaMovimiento = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UsuarioId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -109,11 +122,28 @@ namespace Ev3_Y_O_C.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_Movimientos_TipoMovimientos_TipoMovimientoId",
+                        column: x => x.TipoMovimientoId,
+                        principalTable: "TipoMovimientos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Movimientos_Usuarios_UsuarioId",
                         column: x => x.UsuarioId,
                         principalTable: "Usuarios",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.InsertData(
+                table: "TipoMovimientos",
+                columns: new[] { "Id", "Nombre" },
+                values: new object[,]
+                {
+                    { 1, "Ingreso" },
+                    { 2, "Asignación" },
+                    { 3, "Mantención" },
+                    { 4, "Retorno" }
                 });
 
             migrationBuilder.CreateIndex(
@@ -137,6 +167,11 @@ namespace Ev3_Y_O_C.Migrations
                 column: "HerramientaId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Movimientos_TipoMovimientoId",
+                table: "Movimientos",
+                column: "TipoMovimientoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Movimientos_UsuarioId",
                 table: "Movimientos",
                 column: "UsuarioId");
@@ -152,6 +187,9 @@ namespace Ev3_Y_O_C.Migrations
 
             migrationBuilder.DropTable(
                 name: "Herramientas");
+
+            migrationBuilder.DropTable(
+                name: "TipoMovimientos");
 
             migrationBuilder.DropTable(
                 name: "Usuarios");

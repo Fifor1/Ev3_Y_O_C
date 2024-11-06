@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Ev3_Y_O_C.Data;
-using Ev3_Y_O_C.Models;
 
 namespace Ev3_Y_O_C.Controllers
 {
@@ -22,7 +21,7 @@ namespace Ev3_Y_O_C.Controllers
         // GET: Movimientos
         public async Task<IActionResult> Index()
         {
-            var aspWebContext = _context.Movimientos.Include(m => m.Herramienta).Include(m => m.Usuario);
+            var aspWebContext = _context.Movimientos.Include(m => m.Herramienta).Include(m => m.TipoMovimiento).Include(m => m.Usuario);
             return View(await aspWebContext.ToListAsync());
         }
 
@@ -36,6 +35,7 @@ namespace Ev3_Y_O_C.Controllers
 
             var movimiento = await _context.Movimientos
                 .Include(m => m.Herramienta)
+                .Include(m => m.TipoMovimiento)
                 .Include(m => m.Usuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (movimiento == null)
@@ -49,54 +49,28 @@ namespace Ev3_Y_O_C.Controllers
         // GET: Movimientos/Create
         public IActionResult Create()
         {
-            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Nombre");
-            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Nombre");
-
-            // Crear lista de opciones para TipoMovimiento
-            ViewData["TipoMovimientoList"] = Enum.GetValues(typeof(TipoMovimiento))
-                                                 .Cast<TipoMovimiento>()
-                                                 .Select(t => new SelectListItem
-                                                 {
-                                                     Value = t.ToString(),
-                                                     Text = t.ToString()
-                                                 }).ToList();
-
+            ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Id");
+            ViewData["TipoMovimientoId"] = new SelectList(_context.TipoMovimientos, "Id", "Nombre");
+            ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id");
             return View();
         }
 
         // POST: Movimientos/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,HerramientaId,TipoMovimiento,FechaMovimiento,UsuarioId")] Movimiento movimiento)
+        public async Task<IActionResult> Create([Bind("Id,HerramientaId,TipoMovimientoId,FechaMovimiento,UsuarioId")] Movimiento movimiento)
         {
             if (ModelState.IsValid)
             {
                 _context.Add(movimiento);
                 await _context.SaveChangesAsync();
-
-                if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-                {
-                    return Json(new { success = true, message = "Movimiento creado exitosamente." });
-                }
                 return RedirectToAction(nameof(Index));
             }
-
-            // Recargar datos en caso de error
             ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Id", movimiento.HerramientaId);
+            ViewData["TipoMovimientoId"] = new SelectList(_context.TipoMovimientos, "Id", "Nombre", movimiento.TipoMovimientoId);
             ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id", movimiento.UsuarioId);
-            ViewData["TipoMovimientoList"] = Enum.GetValues(typeof(TipoMovimiento))
-                                                 .Cast<TipoMovimiento>()
-                                                 .Select(t => new SelectListItem
-                                                 {
-                                                     Value = t.ToString(),
-                                                     Text = t.ToString()
-                                                 }).ToList();
-
-            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
-            {
-                return Json(new { success = false, errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage) });
-            }
-
             return View(movimiento);
         }
 
@@ -114,22 +88,17 @@ namespace Ev3_Y_O_C.Controllers
                 return NotFound();
             }
             ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Id", movimiento.HerramientaId);
+            ViewData["TipoMovimientoId"] = new SelectList(_context.TipoMovimientos, "Id", "Nombre", movimiento.TipoMovimientoId);
             ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id", movimiento.UsuarioId);
-            ViewData["TipoMovimientoList"] = Enum.GetValues(typeof(TipoMovimiento))
-                                                 .Cast<TipoMovimiento>()
-                                                 .Select(t => new SelectListItem
-                                                 {
-                                                     Value = t.ToString(),
-                                                     Text = t.ToString()
-                                                 }).ToList();
-
             return View(movimiento);
         }
 
         // POST: Movimientos/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,HerramientaId,TipoMovimiento,FechaMovimiento,UsuarioId")] Movimiento movimiento)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,HerramientaId,TipoMovimientoId,FechaMovimiento,UsuarioId")] Movimiento movimiento)
         {
             if (id != movimiento.Id)
             {
@@ -157,15 +126,8 @@ namespace Ev3_Y_O_C.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["HerramientaId"] = new SelectList(_context.Herramientas, "Id", "Id", movimiento.HerramientaId);
+            ViewData["TipoMovimientoId"] = new SelectList(_context.TipoMovimientos, "Id", "Nombre", movimiento.TipoMovimientoId);
             ViewData["UsuarioId"] = new SelectList(_context.Usuarios, "Id", "Id", movimiento.UsuarioId);
-            ViewData["TipoMovimientoList"] = Enum.GetValues(typeof(TipoMovimiento))
-                                                 .Cast<TipoMovimiento>()
-                                                 .Select(t => new SelectListItem
-                                                 {
-                                                     Value = t.ToString(),
-                                                     Text = t.ToString()
-                                                 }).ToList();
-
             return View(movimiento);
         }
 
@@ -179,6 +141,7 @@ namespace Ev3_Y_O_C.Controllers
 
             var movimiento = await _context.Movimientos
                 .Include(m => m.Herramienta)
+                .Include(m => m.TipoMovimiento)
                 .Include(m => m.Usuario)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (movimiento == null)
@@ -203,14 +166,14 @@ namespace Ev3_Y_O_C.Controllers
             {
                 _context.Movimientos.Remove(movimiento);
             }
-
+            
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool MovimientoExists(int id)
         {
-            return (_context.Movimientos?.Any(e => e.Id == id)).GetValueOrDefault();
+          return (_context.Movimientos?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

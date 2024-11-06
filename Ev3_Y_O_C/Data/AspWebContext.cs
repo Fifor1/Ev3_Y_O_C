@@ -12,10 +12,21 @@ namespace Ev3_Y_O_C.Data
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Asignacion> Asignaciones { get; set; }
         public DbSet<Movimiento> Movimientos { get; set; }
+        public DbSet<TipoMovimiento> TipoMovimientos { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+
+             base.OnModelCreating(modelBuilder);
+
+            // Datos iniciales para la entidad TipoMovimiento
+            modelBuilder.Entity<TipoMovimiento>().HasData(
+                new TipoMovimiento { Id = 1, Nombre = "Ingreso" },
+                new TipoMovimiento { Id = 2, Nombre = "Asignación" },
+                new TipoMovimiento { Id = 3, Nombre = "Mantención" },
+                new TipoMovimiento { Id = 4, Nombre = "Retorno" }
+            );
+
             modelBuilder.Entity<Usuario>()
                 .HasMany(u => u.Asignaciones)
                 .WithOne(a => a.Usuario)
@@ -35,6 +46,12 @@ namespace Ev3_Y_O_C.Data
                 .HasOne(m => m.Usuario)
                 .WithMany()
                 .HasForeignKey(m => m.UsuarioId);
+
+            // Relación entre Movimiento y TipoMovimiento
+            modelBuilder.Entity<Movimiento>()
+                .HasOne(m => m.TipoMovimiento)
+                .WithMany()
+                .HasForeignKey(m => m.TipoMovimientoId);
         }
     }
 }
