@@ -25,6 +25,8 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+
+                        <!-- Asignaciones Dropdown -->
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle text-dark" href="#" id="asignacionesDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 Asignaciones
@@ -35,19 +37,66 @@
                                 </li>
                                 <li>
                                     <a class="dropdown-item" asp-area="" asp-controller="Asignacions" asp-action="Create">Crear Asignaciones</a>
-                                </li>   
+                                </li>
                             </ul>
                         </li>
+
+                        <!-- Herramientas Dropdown -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-dark" href="#" id="retonosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Movimientos
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="herramientasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Herramientas
                             </a>
-                            <ul class="dropdown-menu" aria-labelledby="retonosDropdown">
+                            <ul class="dropdown-menu" aria-labelledby="herramientasDropdown">
                                 <li>
-                                    <a class="dropdown-item" asp-area="" asp-controller="Movimientoes" asp-action="Index">Mostrar Movimiento</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Herramientas" asp-action="Index">Lista de Herramientas</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" asp-area="" asp-controller="Movimientoes" asp-action="Create">Crear Moviemiento</a>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Herramientas" asp-action="Create">Crear Herramienta</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Usuarios Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="usuariosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Usuarios
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="usuariosDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Usuarios" asp-action="Details">Lista de Usuario</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Usuarios" asp-action="Create">Crear Usuario</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Marcas Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="marcasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Marcas
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="marcasDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Marcas" asp-action="Index">Lista de Marcas</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Marcas" asp-action="Create">Crear Marca</a>
+                                </li>
+                            </ul>
+                        </li>
+
+                        <!-- Movimientos Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="movimientosDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Movimientos
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="movimientosDropdown">
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Movimientos" asp-action="Index">Lista de Movimientos</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-area="" asp-controller="Movimientos" asp-action="Create">Crear Movimiento</a>
                                 </li>
                             </ul>
                         </li>
