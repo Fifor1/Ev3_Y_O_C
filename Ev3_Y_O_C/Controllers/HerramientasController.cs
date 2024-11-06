@@ -137,6 +137,16 @@ namespace Ev3_Y_O_C.Controllers
             return View(herramienta);
         }
 
+
+        // GET: Herramientas/List
+        public async Task<IActionResult> List()
+        {
+            var herramientas = await _context.Herramientas.ToListAsync();
+            return PartialView("_HerramientasList", herramientas); // Retorna un partial view con la lista
+        }
+
+
+
         // POST: Herramientas/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

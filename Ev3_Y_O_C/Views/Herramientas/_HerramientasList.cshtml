@@ -1,0 +1,25 @@
+﻿@model IEnumerable<Ev3_Y_O_C.Models.Herramienta>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Numero de Serie</th>
+            <th>Modelo</th>
+            <th>Estado</th>
+            <th>Fecha de Ingreso</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var herramienta in Model)
+        {
+            <tr>
+                <td>@herramienta.Nombre</td>
+                <td>@herramienta.NumeroSerie</td>
+                <td>@herramienta.Modelo</td>
+                <td>@herramienta.Estado</td>
+                <td>@herramienta.FechaIngreso.ToShortDateString()</td>
+            </tr>
+        }
+    </tbody>
+</table>

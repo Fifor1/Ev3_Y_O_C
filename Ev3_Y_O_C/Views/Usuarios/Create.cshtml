@@ -10,20 +10,22 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" id="createUserForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
+                <input asp-for="Nombre" class="form-control" id="nombreUsuario" />
                 <span asp-validation-for="Nombre" class="text-danger"></span>
+                <small id="nombreUsuarioError" class="form-text text-danger" style="display:none;">El nombre de usuario ya existe.</small>
             </div>
             <div class="form-group">
                 <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
+                <input asp-for="Email" class="form-control" id="emailUsuario" />
                 <span asp-validation-for="Email" class="text-danger"></span>
+                <small id="emailUsuarioError" class="form-text text-danger" style="display:none;">El correo electrónico ya está registrado.</small>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Create" class="btn btn-primary" id="submitButton" />
             </div>
         </form>
     </div>
@@ -33,6 +35,87 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+<!-- Overlay para deshabilitar la pantalla y mostrar el círculo de carga -->
+<div id="overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:1000;">
+    <div style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%);">
+        <div class="spinner-border text-light" role="status">
+            <span class="sr-only"></span>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        $(document).ready(function () {
+
+            $('#nombreUsuario').on('input', function () {
+                var nombreUsuario = $(this).val();
+
+                if (nombreUsuario.length > 0) {
+                    // Mostrar overlay mientras se verifica el nombre de usuario
+                    $('#overlay').show();
+
+                    $.ajax({
+                        url: '@Url.Action("VerificarNombreUsuario", "Usuarios")',
+                        type: 'GET',
+                        data: { nombreUsuario: nombreUsuario },
+                        success: function (data) {
+                            // Si el nombre de usuario existe
+                            if (data) {
+                                $('#nombreUsuarioError').show();
+                                $('#submitButton').prop('disabled', true); // Deshabilitar el botón
+                            } else {
+                                $('#nombreUsuarioError').hide();
+                                $('#submitButton').prop('disabled', false); // Habilitar el botón
+                            }
+                        },
+                        complete: function () {
+                            $('#overlay').hide(); // Ocultar el overlay
+                        }
+                    });
+                } else {
+                    $('#nombreUsuarioError').hide();
+                    $('#submitButton').prop('disabled', false); // Habilitar el botón si el campo está vacío
+                }
+            });
+
+            // Validación del correo (similar si quieres agregar)
+            $('#emailUsuario').on('input', function () {
+                var emailUsuario = $(this).val();
+
+                if (emailUsuario.length > 0) {
+                    // Mostrar overlay mientras se verifica el correo electrónico
+                    $('#overlay').show();
+
+                    $.ajax({
+                        url: '@Url.Action("VerificarEmailUsuario", "Usuarios")',
+                        type: 'GET',
+                        data: { emailUsuario: emailUsuario },
+                        success: function (data) {
+                            // Si el correo electrónico existe
+                            if (data) {
+                                // Mostrar mensaje de error
+                                $('#emailUsuarioError').show();
+                                $('#submitButton').prop('disabled', true); // Deshabilitar el botón
+                            } else {
+                                $('#emailUsuarioError').hide();
+                                $('#submitButton').prop('disabled', false); // Habilitar el botón
+                            }
+                        },
+                        complete: function () {
+                            $('#overlay').hide(); // Ocultar el overlay
+                        }
+                    });
+                } else {
+                    $('#emailUsuarioError').hide();
+                    $('#submitButton').prop('disabled', false); // Habilitar el botón si el campo está vacío
+                }
+            });
+
+        });
+    </script>
 }

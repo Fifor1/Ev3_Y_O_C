@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" id="createHerramientaForm">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Nombre" class="control-label"></label>
@@ -52,6 +52,46 @@
     <a asp-action="Index">Back to List</a>
 </div>
 
+<h3>Herramientas</h3>
+<div id="herramientasListContainer"></div> <!-- Aquí se cargarán las herramientas -->
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Función AJAX para cargar la lista de herramientas
+        $(document).ready(function () {
+            loadHerramientas();
+
+            // Función para cargar la lista de herramientas
+            function loadHerramientas() {
+                $.ajax({
+                    url: '@Url.Action("List", "Herramientas")', // Acción del controlador que retorna la lista
+                    type: 'GET',
+                    success: function (data) {
+                        $('#herramientasListContainer').html(data); // Cargar el resultado en el contenedor
+                    }
+                });
+            }
+
+            // Enviar el formulario de creación de herramienta
+            $('#createHerramientaForm').submit(function (event) {
+                event.preventDefault(); // Prevenir la acción predeterminada del formulario
+                var formData = $(this).serialize(); // Obtener los datos del formulario
+
+                $.ajax({
+                    url: '@Url.Action("Create", "Herramientas")', // Acción para crear la herramienta
+                    type: 'POST',
+                    data: formData,
+                    success: function () {
+                        loadHerramientas(); // Recargar la lista de herramientas
+                    },
+                    error: function () {
+                        alert("Error al crear la herramienta.");
+                    }
+                });
+            });
+        });
+    </script>
 }
