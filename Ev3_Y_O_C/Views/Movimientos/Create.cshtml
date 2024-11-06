@@ -10,17 +10,20 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <!-- Asigna un id al formulario para seleccionarlo con AJAX -->
+        <form id="createMovimientoForm" asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="HerramientaId" class="control-label"></label>
-                <select asp-for="HerramientaId" class ="form-control" asp-items="ViewBag.HerramientaId"></select>
+                <select asp-for="HerramientaId" class="form-control" asp-items="ViewBag.HerramientaId"></select>
             </div>
+
             <div class="form-group">
                 <label asp-for="TipoMovimiento" class="control-label"></label>
-                <select asp-for="TipoMovimiento" class="form-control"></select>
+                <select asp-for="TipoMovimiento" class="form-control" asp-items="@(new SelectList(ViewData["TipoMovimientoList"], "Value", "Text"))"></select>
                 <span asp-validation-for="TipoMovimiento" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <label asp-for="FechaMovimiento" class="control-label"></label>
                 <input asp-for="FechaMovimiento" class="form-control" />
@@ -28,7 +31,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="UsuarioId" class="control-label"></label>
-                <select asp-for="UsuarioId" class ="form-control" asp-items="ViewBag.UsuarioId"></select>
+                <select asp-for="UsuarioId" class="form-control" asp-items="ViewBag.UsuarioId"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
@@ -42,5 +45,31 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#createMovimientoForm').submit(function (event) {
+                event.preventDefault(); // Evita el envío completo de la página
+
+                $.ajax({
+                    url: '@Url.Action("Create", "Movimientos")', // Ruta del controlador
+                    type: 'POST',
+                    data: $(this).serialize(), // Serializa los datos del formulario
+                    success: function (response) {
+                        // Muestra un mensaje de éxito o redirige según sea necesario
+                        alert("Movimiento creado exitosamente.");
+                        window.location.href = '@Url.Action("Index", "Movimiento7s")';
+                    },
+                    error: function (xhr) {
+                        // Muestra un mensaje de error en caso de fallo
+                        alert("Error al crear el movimiento. Por favor, verifica los datos e inténtalo nuevamente.");
+                    }
+                });
+            });
+        });
+    </script>
 }

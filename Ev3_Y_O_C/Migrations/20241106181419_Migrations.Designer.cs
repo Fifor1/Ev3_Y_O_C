@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ev3_Y_O_C.Migrations
 {
     [DbContext(typeof(AspWebContext))]
-    [Migration("20241106125206_Migrations")]
+    [Migration("20241106181419_Migrations")]
     partial class Migrations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
