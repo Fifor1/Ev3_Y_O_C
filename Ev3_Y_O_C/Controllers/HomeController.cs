@@ -1,32 +1,43 @@
 ﻿using Ev3_Y_O_C.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using System.Linq;
+using System.Collections.Generic;
+using Ev3_Y_O_C.Data;
 
 namespace Ev3_Y_O_C.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly AspWebContext _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(AspWebContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
         public IActionResult Index()
         {
-            return View();
-        }
+            var herramientas = _context.Herramientas.ToList(); // Obtener todas las herramientas
+            var totalHerramientas = herramientas.Count;
+            var herramientasEnUso = herramientas.Count(h => h.Estado.ToLower() == "en uso");
+            var enMantenimiento = herramientas.Count(h => h.Estado.ToLower() == "en mantencion");
+            var disponibles = herramientas.Count(h => h.Estado.ToLower() == "disponible");
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+            ViewData["TotalHerramientas"] = totalHerramientas;
+            ViewData["HerramientasEnUso"] = herramientasEnUso;
+            ViewData["EnMantenimiento"] = enMantenimiento;
+            ViewData["Disponibles"] = disponibles;
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return View(herramientas); // Pasamos la lista de herramientas a la vista
         }
+    }
+
+    public class HerramientasViewModel
+    {
+        public int TotalHerramientas { get; set; }
+        public int HerramientasEnUso { get; set; }
+        public int EnMantenimiento { get; set; }
+        public int Disponibles { get; set; }
+        public List<Herramienta> Herramientas { get; set; }
     }
 }

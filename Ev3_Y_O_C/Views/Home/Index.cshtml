@@ -1,8 +1,68 @@
-﻿﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model List<Ev3_Y_O_C.Models.Herramienta>
+@{
+    ViewData["Title"] = "Gestión de Herramientas - Menu Principal";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container mt-4">
+    <h2 class="text-center">Gestión de Herramientas</h2>
+    <div class="row text-center">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5>Total de Herramientas</h5>
+                    <h3>@ViewData["TotalHerramientas"]</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5>Disponibles</h5>
+                    <h3>@ViewData["Disponibles"]</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-white">
+                <div class="card-body">
+                    <h5>En uso</h5>
+                    <h3>@ViewData["HerramientasEnUso"]</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-danger text-white">
+                <div class="card-body">
+                    <h5>En Mantención</h5>
+                    <h3>@ViewData["EnMantenimiento"]</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="table mt-4">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Número de Serie</th>
+                <th>Modelo</th>
+                <th>Estado</th>
+                <th>Fecha de Ingreso</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var herramienta in Model)
+            {
+                    <tr>
+                        <td>@herramienta.Id</td>
+                        <td>@herramienta.Nombre</td>
+                        <td>@herramienta.NumeroSerie</td>
+                        <td>@herramienta.Modelo</td>
+                        <td>@herramienta.Estado</td>
+                        <td>@herramienta.FechaIngreso.ToString("dd-MM-yyyy")</td>
+                    </tr>
+            }
+        </tbody>
+    </table>
 </div>
